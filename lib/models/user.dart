@@ -19,7 +19,7 @@ class User {
 
   factory User.fromDocument(DocumentSnapshot doc) {
     return User(
-      id: doc.documentID,
+      id: doc.id,
       email: doc['email'],
       username: doc['username'],
       url: doc['photoUrl'],
