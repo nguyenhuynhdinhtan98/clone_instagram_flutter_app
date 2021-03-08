@@ -1,8 +1,10 @@
+import 'package:clone_instagram_flutter_app/pages/HomePage.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-import 'file:///E:/Project/Mobile/Flutter/clone_instagram_flutter_app/lib/pages/HomePage.dart';
-
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 

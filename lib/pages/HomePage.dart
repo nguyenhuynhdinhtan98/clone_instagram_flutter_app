@@ -1,9 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 final FirebaseAuth _auth = FirebaseAuth.instance;
+final GoogleSignIn _googleSignIn = GoogleSignIn();
+final usersReference = FirebaseFirestore.instance.collection("users");
 
 class HomePage extends StatefulWidget {
   @override
@@ -11,18 +14,45 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
-  Future<String> _testSignInWithGoogle() async {
-    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
-
-    return 'signInWithGoogle succeeded: W';
-  }
+  bool isSignedIn = false;
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
+    _googleSignIn.onCurrentUserChanged.listen((event) {
+      _controlSignIn(event);
+    });
+  }
+
+  void _controlSignIn(GoogleSignInAccount signInAccount) async {
+    if (signInAccount != null) {
+      setState(() {
+        isSignedIn = true;
+      });
+    } else {
+      setState(() {
+        isSignedIn = false;
+      });
+    }
+  }
+
+  void _handleSignIn() async {
+    try {
+      await _googleSignIn.signIn();
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  void _handleSignOut() async {
+    try {
+      await _googleSignIn.signOut();
+    } catch (error) {
+      print(error);
+    }
+  }
+
+  Scaffold buildSignInScreen() {
     return Scaffold(
       body: Container(
         padding: EdgeInsets.all(25),
@@ -37,9 +67,8 @@ class _HomePageState extends State<HomePage> {
             Padding(
               padding: EdgeInsets.all(20),
               child: GestureDetector(
-                onTap: () {
-                  print("OK");
-                  googleSignIn;
+                onTap: () async {
+                  await _handleSignIn();
                 },
                 child: Image.asset("assets/images/google_signin_button.png",
                     fit: BoxFit.contain),
@@ -50,6 +79,36 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-}
 
-class GoogleSignIn {}
+  Scaffold buildHomeScreen() {
+    return Scaffold(
+      body: Container(
+        padding: EdgeInsets.all(25),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            FlatButton(
+              onPressed: () {
+                _handleSignOut();
+              },
+              child: Text(
+                "Sign Out",
+                style: TextStyle(fontSize: 70),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (isSignedIn) {
+      return buildHomeScreen();
+    } else {
+      return buildSignInScreen();
+    }
+  }
+}
