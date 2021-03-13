@@ -19,8 +19,18 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _googleSignIn.onCurrentUserChanged.listen((event) {
-      _controlSignIn(event);
+    //check auth when auth change
+    _googleSignIn.onCurrentUserChanged.listen((signInAccount) {
+      _controlSignIn(signInAccount);
+    }, onError: (error) {
+      print(error);
+    });
+    // check auth when open app
+    _googleSignIn
+        .signInSilently(suppressErrors: false)
+        .then((signInAccount) => print(signInAccount))
+        .catchError((error) {
+      print(error);
     });
   }
 

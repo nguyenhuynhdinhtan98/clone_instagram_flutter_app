@@ -27,7 +27,7 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cloud_firestore: ^1.0.0
   image: ^3.0.1
-  animator: ^2.0.2
+  animator: ^3.0.0
   image_picker: ^0.7.2
   google_sign_in: ^5.0.0
   timeago: ^3.0.1
