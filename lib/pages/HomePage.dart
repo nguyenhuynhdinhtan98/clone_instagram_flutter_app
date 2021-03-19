@@ -1,3 +1,8 @@
+import 'package:clone_instagram_flutter_app/pages/TimeLinePage.dart';
+import 'package:clone_instagram_flutter_app/pages/SearchPage.dart';
+import 'package:clone_instagram_flutter_app/pages/UploadPage.dart';
+import 'package:clone_instagram_flutter_app/pages/NotificationsPage.dart';
+import 'package:clone_instagram_flutter_app/pages/ProfilePage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,11 +19,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  PageController pageController;
   bool isSignedIn = false;
+  int pageIndex;
 
   @override
   void initState() {
     super.initState();
+    pageIndex = 2;
+    pageController = PageController();
     //check auth when auth change
     _googleSignIn.onCurrentUserChanged.listen((signInAccount) {
       _controlSignIn(signInAccount);
@@ -28,7 +37,7 @@ class _HomePageState extends State<HomePage> {
     // check auth when open app
     _googleSignIn
         .signInSilently(suppressErrors: false)
-        .then((signInAccount) => print(signInAccount))
+        .then((signInAccount) => _controlSignIn(signInAccount))
         .catchError((error) {
       print(error);
     });
@@ -62,6 +71,55 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  whenPageChange(int index) {
+    setState(() {
+      this.pageIndex = index;
+    });
+  }
+
+  onTapChangePage(int index) {
+    pageController.animateToPage(
+      index,
+      duration: Duration(milliseconds: 400),
+      curve: Curves.decelerate,
+    );
+  }
+
+  Scaffold buildHomeScreen() {
+    return Scaffold(
+      body: PageView(
+        children: [
+          SearchPage(),
+          UploadPage(),
+          TimeLinePage(),
+          NotificationsPage(),
+          ProfilePage()
+        ],
+        controller: pageController,
+        onPageChanged: whenPageChange,
+        physics: NeverScrollableScrollPhysics(),
+      ),
+      bottomNavigationBar: CupertinoTabBar(
+        currentIndex: pageIndex,
+        onTap: onTapChangePage,
+        backgroundColor: Theme.of(context).primaryColor,
+        activeColor: Colors.white,
+        inactiveColor: Colors.blueGrey,
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.search)),
+          BottomNavigationBarItem(icon: Icon(Icons.photo_camera)),
+          BottomNavigationBarItem(
+              icon: Icon(
+            Icons.home,
+            size: 35,
+          )),
+          BottomNavigationBarItem(icon: Icon(Icons.notifications)),
+          BottomNavigationBarItem(icon: Icon(Icons.person))
+        ],
+      ),
+    );
+  }
+
   Scaffold buildSignInScreen() {
     return Scaffold(
       body: Container(
@@ -90,29 +148,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Scaffold buildHomeScreen() {
-    return Scaffold(
-      body: Container(
-        padding: EdgeInsets.all(25),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            FlatButton(
-              onPressed: () {
-                _handleSignOut();
-              },
-              child: Text(
-                "Sign Out",
-                style: TextStyle(fontSize: 70),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     if (isSignedIn) {
@@ -120,5 +155,11 @@ class _HomePageState extends State<HomePage> {
     } else {
       return buildSignInScreen();
     }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    pageController.dispose();
   }
 }

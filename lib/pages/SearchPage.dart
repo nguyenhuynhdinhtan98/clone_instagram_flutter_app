@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:clone_instagram_flutter_app/widgets/HeaderPage.dart';
+import 'package:clone_instagram_flutter_app/widgets/ProgressWidget.dart';
 
 class SearchPage extends StatefulWidget {
   @override
@@ -8,13 +10,12 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
-    return Text('Search Page goes here.');
-  }
-}
-
-class UserResult extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Text("User Result here.");
+    return Scaffold(
+      appBar: header(
+        context,
+        strTitle: "Search Page",
+      ),
+      body: circularProgress(),
+    );
   }
 }

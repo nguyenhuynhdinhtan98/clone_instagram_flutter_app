@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:clone_instagram_flutter_app/widgets/HeaderPage.dart';
+import 'package:clone_instagram_flutter_app/widgets/ProgressWidget.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -8,6 +10,13 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
-    return Text("Profile Page goes here.");
+    return Scaffold(
+      appBar: header(
+        context,
+        strTitle: "Profile Page",
+      ),
+      body: circularProgress(),
+    );
+    ;
   }
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:clone_instagram_flutter_app/widgets/HeaderPage.dart';
+import 'package:clone_instagram_flutter_app/widgets/ProgressWidget.dart';
 
 class NotificationsPage extends StatefulWidget {
   @override
@@ -8,13 +10,12 @@ class NotificationsPage extends StatefulWidget {
 class _NotificationsPageState extends State<NotificationsPage> {
   @override
   Widget build(BuildContext context) {
-    return Text('Here goes Activity Feed Page');
-  }
-}
-
-class NotificationsItem extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Text('Activity Feed Item goes here');
+    return Scaffold(
+      appBar: header(
+        context,
+        strTitle: "Notify Page",
+      ),
+      body: circularProgress(),
+    );
   }
 }

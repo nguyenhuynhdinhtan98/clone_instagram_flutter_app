@@ -1,5 +1,19 @@
 import 'package:flutter/material.dart';
 
-header() {
-  return Text("header");
+AppBar header(context,
+    {bool isAppTitle = false,
+    String strTitle,
+    bool disableBackButton = false}) {
+  return AppBar(
+      iconTheme: IconThemeData(
+        color: Colors.red,
+      ),
+      title: Text(
+        isAppTitle ? "Instagram" : strTitle,
+        style: TextStyle(
+            color: Colors.white, fontSize: 40, fontFamily: "Signatra"),
+        overflow: TextOverflow.clip,
+      ),
+      centerTitle: true,
+      automaticallyImplyLeading: disableBackButton ? false : true);
 }
