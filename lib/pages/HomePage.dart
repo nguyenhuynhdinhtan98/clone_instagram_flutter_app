@@ -1,8 +1,10 @@
+import 'package:clone_instagram_flutter_app/pages/CreateAccountPage.dart';
 import 'package:clone_instagram_flutter_app/pages/TimeLinePage.dart';
 import 'package:clone_instagram_flutter_app/pages/SearchPage.dart';
 import 'package:clone_instagram_flutter_app/pages/UploadPage.dart';
 import 'package:clone_instagram_flutter_app/pages/NotificationsPage.dart';
 import 'package:clone_instagram_flutter_app/pages/ProfilePage.dart';
+import 'package:clone_instagram_flutter_app/models/user.dart' as UserModal;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -12,6 +14,9 @@ import 'package:google_sign_in/google_sign_in.dart';
 final FirebaseAuth _auth = FirebaseAuth.instance;
 final GoogleSignIn _googleSignIn = GoogleSignIn();
 final usersReference = FirebaseFirestore.instance.collection("users");
+final DateTime timestamp = DateTime.now();
+
+UserModal.User currentUser;
 
 class HomePage extends StatefulWidget {
   @override
@@ -45,6 +50,7 @@ class _HomePageState extends State<HomePage> {
 
   void _controlSignIn(GoogleSignInAccount signInAccount) async {
     if (signInAccount != null) {
+      await saveDataUserInfor();
       setState(() {
         isSignedIn = true;
       });
@@ -53,6 +59,29 @@ class _HomePageState extends State<HomePage> {
         isSignedIn = false;
       });
     }
+  }
+
+  saveDataUserInfor() async {
+    final GoogleSignInAccount _googleSignInAccout = _googleSignIn.currentUser;
+    DocumentSnapshot documentSnapshot =
+        await usersReference.doc(_googleSignInAccout.id).get();
+    if (!documentSnapshot.exists) {
+      final username = await Navigator.push(context,
+          MaterialPageRoute(builder: (context) => CreateAccountPage()));
+
+      print(_googleSignInAccout);
+      await usersReference.doc(_googleSignInAccout.id).set({
+        "id": _googleSignInAccout.id,
+        "profile_name": _googleSignInAccout.displayName,
+        "user_name": username,
+        "url": _googleSignInAccout.photoUrl,
+        "email": _googleSignInAccout.email,
+        "bio": "",
+        "time_stamp": timestamp
+      });
+      documentSnapshot = await usersReference.doc(_googleSignInAccout.id).get();
+    }
+    currentUser = UserModal.User.fromDocument(documentSnapshot);
   }
 
   void _handleSignIn() async {

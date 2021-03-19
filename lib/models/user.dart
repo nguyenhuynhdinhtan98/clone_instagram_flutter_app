@@ -21,9 +21,9 @@ class User {
     return User(
       id: doc.id,
       email: doc['email'],
-      username: doc['username'],
-      url: doc['photoUrl'],
-      profileName: doc['displayName'],
+      username: doc['user_name'],
+      url: doc['url'],
+      profileName: doc['profile_name'],
       bio: doc['bio'],
     );
   }
