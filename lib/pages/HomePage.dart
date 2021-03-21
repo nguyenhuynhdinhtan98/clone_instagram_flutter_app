@@ -32,7 +32,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     pageIndex = 2;
-    pageController = PageController();
+    pageController = PageController(initialPage: pageIndex, keepPage: true);
     //check auth when auth change
     _googleSignIn.onCurrentUserChanged.listen((signInAccount) {
       _controlSignIn(signInAccount);

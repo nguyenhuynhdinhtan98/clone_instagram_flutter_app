@@ -1,6 +1,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.clone_instagram_flutter_app">
+    <queries>
+      <intent>
+        <action android:name="android.media.action.IMAGE_CAPTURE" />
+      </intent>
+    </queries>
+    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES"/>
+
    <application
+    
         android:label="clone_instagram_flutter_app"
         android:icon="@mipmap/ic_launcher">
         <activity

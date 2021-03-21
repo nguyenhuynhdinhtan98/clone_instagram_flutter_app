@@ -67,16 +67,13 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  displayListUser() {
+  displaySearchResultScreen() {
     return FutureBuilder(
         future: futureBuilder,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return Expanded(
-              flex: 1,
-              child: Center(
-                child: circularProgress(),
-              ),
+            return Center(
+              child: circularProgress(),
             );
           }
 
@@ -86,9 +83,31 @@ class _SearchPageState extends State<SearchPage> {
             UserResult userResult = UserResult(eachUser);
             searchUsersResult.add(userResult);
           });
-          return Expanded(
-              flex: 1, child: ListView(children: searchUsersResult));
+          return ListView(children: searchUsersResult);
         });
+  }
+
+  Container displayNoSearchResultScreen() {
+    return Container(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Icon(
+            Icons.group,
+            color: Colors.black,
+            size: 50.0,
+          ),
+          Text(
+            "Search Users",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.w500,
+                fontSize: 30.0),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -101,7 +120,14 @@ class _SearchPageState extends State<SearchPage> {
       body: Container(
           padding: EdgeInsets.all(10),
           child: Column(
-            children: [displaySearchBar(), displayListUser()],
+            children: [
+              displaySearchBar(),
+              Expanded(
+                  flex: 1,
+                  child: futureBuilder == null
+                      ? displayNoSearchResultScreen()
+                      : displaySearchResultScreen())
+            ],
           )),
     );
   }
