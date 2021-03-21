@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:clone_instagram_flutter_app/widgets/HeaderPage.dart';
 import 'package:image_picker/image_picker.dart';
@@ -11,33 +12,20 @@ class UploadPage extends StatefulWidget {
 }
 
 class _UploadPageState extends State<UploadPage> {
-  File _imageFile;
+  File imageFile;
+
   final picker = ImagePicker();
-  captureImageWithCamera() async {
+
+  captureImage(ImageSource imageSource) async {
     Navigator.pop(context);
     final pickedFile = await picker.getImage(
-        source: ImageSource.camera,
-        maxHeight: MediaQuery.of(context).size.height - 20,
-        maxWidth: MediaQuery.of(context).size.width / 2);
+        source: imageSource,
+        maxHeight: MediaQuery.of(context).size.height,
+        maxWidth: MediaQuery.of(context).size.width / 3);
 
-    setState(() {
-      if (pickedFile.path != null) {
-        _imageFile = File(pickedFile.path);
-      } else {
-        print('No image selected.');
-      }
-    });
-  }
-
-  captureImageWithGallery() async {
-    Navigator.pop(context);
-    final pickedFile = await picker.getImage(
-        source: ImageSource.gallery,
-        maxHeight: MediaQuery.of(context).size.height - 20,
-        maxWidth: MediaQuery.of(context).size.width / 2);
     setState(() {
       if (pickedFile != null) {
-        _imageFile = File(pickedFile.path);
+        imageFile = File(pickedFile.path);
       } else {
         print('No image selected.');
       }
@@ -66,7 +54,7 @@ class _UploadPageState extends State<UploadPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   FlatButton(
-                    onPressed: captureImageWithCamera,
+                    onPressed: captureImage(ImageSource.camera),
                     child: Container(
                       child: Text("Pick Image Camera"),
                     ),
@@ -76,7 +64,7 @@ class _UploadPageState extends State<UploadPage> {
                     height: 0.5,
                   ),
                   FlatButton(
-                    onPressed: captureImageWithGallery,
+                    onPressed: captureImage(ImageSource.camera),
                     child: Container(
                       child: Text("Pick Image Gallery"),
                     ),
@@ -122,16 +110,20 @@ class _UploadPageState extends State<UploadPage> {
           strTitle: "Upload Page",
         ),
         body: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            AspectRatio(
-              aspectRatio: 16 / 9,
-              child: Image(
-                image: NetworkImage(
-                    'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg'),
-                fit: BoxFit.fill,
-              ),
-            ),
-            renderBodyUploadPage()
+            imageFile != null
+                ? Container(
+                    child: AspectRatio(
+                      aspectRatio: 16 / 9,
+                      child: Image(
+                        image: FileImage(imageFile),
+                        fit: BoxFit.fill,
+                      ),
+                    ),
+                  )
+                : Container(),
+            renderBodyUploadPage(),
           ],
         ));
   }
