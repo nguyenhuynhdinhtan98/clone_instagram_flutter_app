@@ -6,7 +6,7 @@ AppBar header(context,
     bool disableBackButton = false}) {
   return AppBar(
       iconTheme: IconThemeData(
-        color: Colors.red,
+        color: Colors.white,
       ),
       title: Text(
         isAppTitle ? "Instagram" : strTitle,

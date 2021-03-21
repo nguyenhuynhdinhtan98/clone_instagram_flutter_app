@@ -110,7 +110,7 @@ class _HomePageState extends State<HomePage> {
     pageController.animateToPage(
       index,
       duration: Duration(milliseconds: 400),
-      curve: Curves.decelerate,
+      curve: Curves.easeInOut,
     );
   }
 
@@ -126,14 +126,14 @@ class _HomePageState extends State<HomePage> {
         ],
         controller: pageController,
         onPageChanged: whenPageChange,
-        physics: NeverScrollableScrollPhysics(),
+        physics: RangeMaintainingScrollPhysics(),
       ),
       bottomNavigationBar: CupertinoTabBar(
         currentIndex: pageIndex,
         onTap: onTapChangePage,
         backgroundColor: Theme.of(context).primaryColor,
         activeColor: Colors.white,
-        inactiveColor: Colors.blueGrey,
+        inactiveColor: Colors.black,
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.search)),
           BottomNavigationBarItem(icon: Icon(Icons.photo_camera)),
