@@ -1,10 +1,8 @@
+import 'package:clone_instagram_flutter_app/constants.dart';
 import 'package:clone_instagram_flutter_app/pages/HomePage.dart';
-import 'package:clone_instagram_flutter_app/pages/NotificationsPage.dart';
-import 'package:clone_instagram_flutter_app/pages/ProfilePage.dart';
-import 'package:clone_instagram_flutter_app/pages/SearchPage.dart';
-import 'package:clone_instagram_flutter_app/pages/TimeLinePage.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,7 +16,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
+        scaffoldBackgroundColor: Colors.white,
         primarySwatch: Colors.blue,
+        textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
+        visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: HomePage(),
     );

@@ -33,7 +33,9 @@ dependencies:
   google_sign_in: ^5.0.1
   timeago: ^3.0.2
   firebase_auth: ^1.0.1
-  geolocator: ^7.0.1
+  geolocator: 7.0.1
+  geocoding: ^2.0.0
+  google_fonts: ^2.0.0
   uuid: ^3.0.1
   cupertino_icons: ^1.0.2
   path_provider: ^2.0.1

@@ -1,10 +1,10 @@
+import 'package:clone_instagram_flutter_app/models/user.dart' as UserModal;
 import 'package:clone_instagram_flutter_app/pages/CreateAccountPage.dart';
-import 'package:clone_instagram_flutter_app/pages/TimeLinePage.dart';
-import 'package:clone_instagram_flutter_app/pages/SearchPage.dart';
-import 'package:clone_instagram_flutter_app/pages/UploadPage.dart';
 import 'package:clone_instagram_flutter_app/pages/NotificationsPage.dart';
 import 'package:clone_instagram_flutter_app/pages/ProfilePage.dart';
-import 'package:clone_instagram_flutter_app/models/user.dart' as UserModal;
+import 'package:clone_instagram_flutter_app/pages/SearchPage.dart';
+import 'package:clone_instagram_flutter_app/pages/TimeLinePage.dart';
+import 'package:clone_instagram_flutter_app/pages/UploadPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
