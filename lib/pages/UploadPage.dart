@@ -1,32 +1,99 @@
 import 'dart:io';
+import 'dart:ui';
 
+import 'package:clone_instagram_flutter_app/models/user.dart';
+import 'package:clone_instagram_flutter_app/pages/HomePage.dart';
 import 'package:clone_instagram_flutter_app/widgets/HeaderPage.dart';
+import 'package:clone_instagram_flutter_app/widgets/ProgressWidget.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/material/list_tile.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:image/image.dart' as Imd;
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:uuid/uuid.dart';
 
 class UploadPage extends StatefulWidget {
+  final User gCurrentUser;
+
+  UploadPage({this.gCurrentUser});
+
   @override
   _UploadPageState createState() => _UploadPageState();
 }
 
 class _UploadPageState extends State<UploadPage> {
+  String postId = Uuid().v4();
+  bool uploadImage = false;
   File imageFile;
   final picker = ImagePicker();
   bool serviceEnabled;
   LocationPermission permission;
+  TextEditingController locationTextEditingController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
-
-    imageFile = File(
-        "/storage/emulated/0/Android/data/com.example.clone_instagram_flutter_app/files/Pictures/scaled_image_picker764989931507624571.jpg");
   }
 
-  TextEditingController locationTextEditingController = TextEditingController();
+  compressingPhoto() async {
+    final tDirectory = await getTemporaryDirectory();
+    final path = tDirectory.path;
+    Imd.Image mImage = Imd.decodeImage(imageFile.readAsBytesSync());
+    var compressImageFile = await File('$path/img_$postId.jpg')
+      ..writeAsBytesSync(Imd.encodeJpg(mImage, quality: 60));
+
+    setState(() {
+      imageFile = compressImageFile;
+    });
+  }
+
+  uploadImageFireStore() async {
+    setState(() {
+      uploadImage = true;
+    });
+    await compressingPhoto();
+    String downloadUrl = await uploadPhoto(imageFile);
+    await savePostInfoToFireStore(
+        url: downloadUrl, location: locationTextEditingController.text);
+    clearPostInfo();
+  }
+
+  savePostInfoToFireStore({String url, String location}) {
+    postsReference
+        .doc(widget.gCurrentUser.id)
+        .collection("usersPosts")
+        .doc(postId)
+        .set({
+      "postId": postId,
+      "ownerId": widget.gCurrentUser.id,
+      "timestamp": DateTime.now(),
+      "likes": {},
+      "username": widget.gCurrentUser.username,
+      "location": location,
+      "url": url,
+    });
+  }
+
+  clearPostInfo() {
+    locationTextEditingController.clear();
+    setState(() {
+      postId = Uuid().v4();
+      uploadImage = false;
+      imageFile = null;
+    });
+  }
+
+  Future<String> uploadPhoto(image) async {
+    firebase_storage.UploadTask storageUploadTask =
+        referenceFireStorage.child("post_$postId.jpg").putFile(imageFile);
+    String urlDownload = await storageUploadTask.snapshot.ref.getDownloadURL();
+    return urlDownload;
+  }
+
   Future<dynamic> getCurrentPosition() async {
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
@@ -56,9 +123,9 @@ class _UploadPageState extends State<UploadPage> {
         source: imageSource,
         maxHeight: MediaQuery.of(context).size.height,
         maxWidth: MediaQuery.of(context).size.width / 3);
+
     setState(() {
       if (pickedFile != null) {
-        print(pickedFile.path);
         imageFile = File(pickedFile.path);
       } else {
         print('No image selected.');
@@ -146,24 +213,17 @@ class _UploadPageState extends State<UploadPage> {
         ));
   }
 
-  shareFile() {}
-  removeFile() {
-    setState(() {
-      imageFile = null;
-    });
-  }
-
   displayUploadFormScreen() {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: removeFile,
+          onPressed: () => clearPostInfo(),
         ),
         actions: [
           FlatButton(
-              onPressed: shareFile,
+              onPressed: uploadImageFireStore,
               child: Text(
                 "Share",
                 style: TextStyle(
@@ -176,12 +236,13 @@ class _UploadPageState extends State<UploadPage> {
       body: Container(
         child: Column(
           children: [
+            uploadImage == true ? linearProgress() : Container(),
             Container(
                 child: AspectRatio(
               aspectRatio: 16 / 9,
               child: Image(
                 image: FileImage(imageFile),
-                fit: BoxFit.fill,
+                fit: BoxFit.contain,
               ),
             )),
             Container(

@@ -7,13 +7,17 @@ import 'package:clone_instagram_flutter_app/pages/TimeLinePage.dart';
 import 'package:clone_instagram_flutter_app/pages/UploadPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-final FirebaseAuth _auth = FirebaseAuth.instance;
-final GoogleSignIn _googleSignIn = GoogleSignIn();
+final FirebaseAuth auth = FirebaseAuth.instance;
+final GoogleSignIn googleSignIn = GoogleSignIn();
 final usersReference = FirebaseFirestore.instance.collection("users");
+final postsReference = FirebaseFirestore.instance.collection("posts");
+final firebase_storage.Reference referenceFireStorage =
+    firebase_storage.FirebaseStorage.instance.ref().child("Picture");
 final DateTime timestamp = DateTime.now();
 
 UserModal.User currentUser;
@@ -34,13 +38,13 @@ class _HomePageState extends State<HomePage> {
     pageIndex = 2;
     pageController = PageController(initialPage: pageIndex, keepPage: true);
     //check auth when auth change
-    _googleSignIn.onCurrentUserChanged.listen((signInAccount) {
+    googleSignIn.onCurrentUserChanged.listen((signInAccount) {
       _controlSignIn(signInAccount);
     }, onError: (error) {
       print(error);
     });
     // check auth when open app
-    _googleSignIn
+    googleSignIn
         .signInSilently(suppressErrors: false)
         .then((signInAccount) => _controlSignIn(signInAccount))
         .catchError((error) {
@@ -62,7 +66,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   saveDataUserInfor() async {
-    final GoogleSignInAccount _googleSignInAccout = _googleSignIn.currentUser;
+    final GoogleSignInAccount _googleSignInAccout = googleSignIn.currentUser;
     DocumentSnapshot documentSnapshot =
         await usersReference.doc(_googleSignInAccout.id).get();
     if (!documentSnapshot.exists) {
@@ -86,7 +90,7 @@ class _HomePageState extends State<HomePage> {
 
   void _handleSignIn() async {
     try {
-      await _googleSignIn.signIn();
+      await googleSignIn.signIn();
     } catch (error) {
       print(error);
     }
@@ -94,7 +98,7 @@ class _HomePageState extends State<HomePage> {
 
   void _handleSignOut() async {
     try {
-      await _googleSignIn.signOut();
+      await googleSignIn.signOut();
     } catch (error) {
       print(error);
     }
@@ -119,7 +123,7 @@ class _HomePageState extends State<HomePage> {
       body: PageView(
         children: [
           SearchPage(),
-          UploadPage(),
+          UploadPage(gCurrentUser: currentUser),
           TimeLinePage(),
           NotificationsPage(),
           ProfilePage()
