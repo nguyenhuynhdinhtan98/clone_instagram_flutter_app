@@ -126,7 +126,7 @@ class _HomePageState extends State<HomePage> {
           UploadPage(gCurrentUser: currentUser),
           TimeLinePage(),
           NotificationsPage(),
-          ProfilePage()
+          ProfilePage(userProfileId: currentUser?.id),
         ],
         controller: pageController,
         onPageChanged: whenPageChange,
