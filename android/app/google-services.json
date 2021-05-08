@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "283241652503-euacbs5623g078oj1e9d0mo97ulj9phv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.clone_instagram_flutter_app",
+            "certificate_hash": "dbbae6d71c2fa9e2a15feb9725e42ddbc61e19ea"
+          }
+        },
+        {
           "client_id": "283241652503-in1107i118sk9tkmmrhnnhqd8hm218mc.apps.googleusercontent.com",
           "client_type": 3
         }
