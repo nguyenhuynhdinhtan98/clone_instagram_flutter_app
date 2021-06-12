@@ -36,8 +36,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Form(
-              autovalidate: true,
-              key: _formGlobalKey,
+              autovalidateMode: AutovalidateMode.always, key: _formGlobalKey,
               child: TextFormField(
                 style: TextStyle(color: Colors.black),
                 onChanged: (val) => userName = val,

@@ -43,7 +43,7 @@ class _UploadPageState extends State<UploadPage> {
     final tDirectory = await getTemporaryDirectory();
     final path = tDirectory.path;
     Imd.Image mImage = Imd.decodeImage(imageFile.readAsBytesSync());
-    var compressImageFile = await File('$path/img_$postId.jpg')
+    var compressImageFile = File('$path/img_$postId.jpg')
       ..writeAsBytesSync(Imd.encodeJpg(mImage, quality: 60));
 
     setState(() {
@@ -110,9 +110,9 @@ class _UploadPageState extends State<UploadPage> {
           await placemarkFromCoordinates(position.latitude, position.longitude);
       Placemark mPlaceMark = placemarks[0];
       String completeAddressInfo =
-          await '${mPlaceMark.subThoroughfare} ${mPlaceMark.thoroughfare}, ${mPlaceMark.subLocality} ${mPlaceMark.locality}, ${mPlaceMark.subAdministrativeArea} ${mPlaceMark.administrativeArea}, ${mPlaceMark.postalCode} ${mPlaceMark.country},';
+          '${mPlaceMark.subThoroughfare} ${mPlaceMark.thoroughfare}, ${mPlaceMark.subLocality} ${mPlaceMark.locality}, ${mPlaceMark.subAdministrativeArea} ${mPlaceMark.administrativeArea}, ${mPlaceMark.postalCode} ${mPlaceMark.country},';
       String specificAddress =
-          await '${mPlaceMark.locality}, ${mPlaceMark.country}';
+          '${mPlaceMark.locality}, ${mPlaceMark.country}';
       locationTextEditingController.text = specificAddress;
     }
   }

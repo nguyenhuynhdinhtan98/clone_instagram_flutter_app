@@ -169,7 +169,7 @@ class _HomePageState extends State<HomePage> {
               padding: EdgeInsets.all(20),
               child: GestureDetector(
                 onTap: () async {
-                  await _handleSignIn();
+                  _handleSignIn();
                 },
                 child: Image.asset("assets/images/google_signin_button.png",
                     fit: BoxFit.contain),
